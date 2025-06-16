@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>我的天氣筆記</title>
+  <style>
+    body {
+      font-family: "Noto Sans TC", sans-serif;
+      background: #eef2f7;
+      padding: 2em;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: #fff;
+      padding: 2em;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    textarea, input {
+      width: 100%;
+      margin-top: 0.5em;
+      margin-bottom: 1em;
+      padding: 0.7em;
+    }
+    button {
+      padding: 0.7em 1em;
+      background: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    .post {
+      background: #f0f0f0;
+      padding: 1em;
+      margin-top: 1em;
+      border-left: 5px solid #007BFF;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>☁️ 我的天氣筆記</h2>
+
+    <label>標題：</label>
+    <input type="text" id="title" placeholder="例如：午後雷陣雨突然來襲">
+
+    <label>文章內容：</label>
+    <textarea id="content" rows="5" placeholder="輸入你今天的天氣觀察、對流狀況、溫度、風向..."></textarea>
+
+    <button onclick="addPost()">發佈文章</button>
+
+    <h3>📝 我的文章</h3>
+    <div id="posts"></div>
+  </div>
+
+  <script>
+    function addPost() {
+      const title = document.getElementById("title").value.trim();
+      const content = document.getElementById("content").value.trim();
+
+      if (!title || !content) {
+        alert("請輸入標題與內容！");
+        return;
+      }
+
+      const post = { title, content, time: new Date().toLocaleString() };
+      const posts = JSON.parse(localStorage.getItem("weatherPosts") || "[]");
+      posts.unshift(post);
+      localStorage.setItem("weatherPosts", JSON.stringify(posts));
+      displayPosts();
+      document.getElementById("title").value = "";
+      document.getElementById("content").value = "";
+    }
+
+    function displayPosts() {
+      const posts = JSON.parse(localStorage.getItem("weatherPosts") || "[]");
+      const container = document.getElementById("posts");
+      container.innerHTML = posts.map(p => `
+        <div class="post">
+          <strong>${p.title}</strong><br>
+          <small>${p.time}</small><br>
+          <p>${p.content}</p>
+        </div>
+      `).join('');
+    }
+
+    displayPosts(); // 初始載入
+  </script>
+</body>
+</html>
